@@ -6,6 +6,7 @@
 # pip install datasets~=2.14.0
 # python ./zeroshot/download_datasets.py
 
+echo "starting the script"
 # Iterate through all datasets for heldout testing
 dataset_name_heldout=(
     'wellformedquery' 'financialphrasebank' 'rottentomatoes' 'amazonpolarity'
@@ -20,6 +21,7 @@ dataset_name_heldout=(
 
 for dataset_name in "${dataset_name_heldout[@]}"
 do
+    echo "Submitting job for dataset: $dataset_name"
     ./zeroshot/job_run.bash "$dataset_name" True True > "./zeroshot/logs/logs_$dataset_name.txt" 2>&1
 done
 
@@ -27,7 +29,8 @@ done
 datasets=("all_except_nli" "none")
 
 for dataset_name in "${datasets[@]}"
-do
+do  
+    echo "Submitting job for dataset: $dataset_name"    
     ./zeroshot/job_run.bash "$dataset_name" True True > "./zeroshot/logs/logs_$dataset_name.txt" 2>&1
 done
 

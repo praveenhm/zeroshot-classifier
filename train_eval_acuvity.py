@@ -19,20 +19,6 @@ DATE = 20240109
 SEED_GLOBAL = 42
 
 import os
-if 'COLAB_GPU' in os.environ or 'COLAB_JUPYTER_TRANSPORT' in os.environ or 'COLAB_BACKEND_VERSION' in os.environ:
-    USING_COLAB = False
-else:
-    USING_COLAB = False
-
-if USING_COLAB:
-    # comment this away this if you are not using colab
-    !pip install transformers[sentencepiece]~=4.33.0 -q
-    !pip install datasets~=2.14.0 -q
-    !pip install accelerate~=0.23.0 -q
-    !pip install wandb~=0.16.0 -q
-    !pip install mdutils~=1.6.0 -q
-    !pip install scikit-learn~=1.2.0 -q
-
 ## load packages
 import pandas as pd
 import numpy as np
@@ -68,22 +54,6 @@ np.random.seed(SEED_GLOBAL)
 torch.manual_seed(SEED_GLOBAL)
 random.seed(SEED_GLOBAL)
 
-if USING_COLAB:
-    # info on the GPU you are using
-    #!nvidia-smi
-    # info on available ram
-    from psutil import virtual_memory
-    ram_gb = virtual_memory().total / 1e9
-    print('\n\nYour runtime has {:.1f} gigabytes of available RAM\n'.format(ram_gb))
-
-if USING_COLAB:
-    ## connect to google drive
-    from google.colab import drive
-    drive.mount('/content/drive', force_remount=False)
-
-    #set wd
-    print(os.getcwd())
-    os.chdir("/content/drive/My Drive/PhD/zero-shot-models")
 
 print(os.getcwd())
 
@@ -114,17 +84,8 @@ parser.add_argument('-upload', '--upload_to_hub',type=str2bool, default=False,
                     help='Upload model to HF hub if flag is set')
 
 
-if USING_COLAB:
-    args = parser.parse_args([
-        "--dataset_name_heldout", "none",  #"all_except_nli",
-        # comment following arguments away to set them to False
-        "--do_train", "True",
-        "--upload_to_hub", "True"
-    ])
-    print("Manually defined arguments:\n", args)
-elif not USING_COLAB:
-    args = parser.parse_args()
-    print("Arguments passed via the terminal:\n", args)
+args = parser.parse_args()
+print("Arguments passed via the terminal:\n", args)
 
 """### Load data"""
 

@@ -53,23 +53,6 @@ np.random.seed(SEED_GLOBAL)
 torch.manual_seed(SEED_GLOBAL)
 random.seed(SEED_GLOBAL)
 
-if USING_COLAB:
-    # info on the GPU you are using
-    #!nvidia-smi
-    # info on available ram
-    from psutil import virtual_memory
-    ram_gb = virtual_memory().total / 1e9
-    print('\n\nYour runtime has {:.1f} gigabytes of available RAM\n'.format(ram_gb))
-
-if USING_COLAB:
-    ## connect to google drive
-    from google.colab import drive
-    drive.mount('/content/drive', force_remount=False)
-
-    #set wd
-    print(os.getcwd())
-    os.chdir("/content/drive/My Drive/PhD/zero-shot-models")
-
 print(os.getcwd())
 
 # local config.py file with tokens
@@ -99,17 +82,8 @@ parser.add_argument('-upload', '--upload_to_hub',type=str2bool, default=False,
                     help='Upload model to HF hub if flag is set')
 
 
-if USING_COLAB:
-    args = parser.parse_args([
-        "--dataset_name_heldout", "none",  #"all_except_nli",
-        # comment following arguments away to set them to False
-        "--do_train", "True",
-        "--upload_to_hub", "True"
-    ])
-    print("Manually defined arguments:\n", args)
-elif not USING_COLAB:
-    args = parser.parse_args()
-    print("Arguments passed via the terminal:\n", args)
+args = parser.parse_args()
+print("Arguments passed via the terminal:\n", args)
 
 """### Load data"""
 

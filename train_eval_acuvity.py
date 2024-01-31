@@ -20,7 +20,7 @@ SEED_GLOBAL = 42
 
 import os
 if 'COLAB_GPU' in os.environ or 'COLAB_JUPYTER_TRANSPORT' in os.environ or 'COLAB_BACKEND_VERSION' in os.environ:
-    USING_COLAB = True
+    USING_COLAB = False
 else:
     USING_COLAB = False
 

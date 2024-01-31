@@ -57,6 +57,7 @@ random.seed(SEED_GLOBAL)
 
 print(os.getcwd())
 
+
 # local config.py file with tokens
 import config
 

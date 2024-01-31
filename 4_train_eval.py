@@ -14,25 +14,10 @@ Note that this notebook was written and tested in Google Colab to increase repro
 """
 
 # for versioning of experiments with W&B
-DATE = 20240109
-
+DATE = 20240131
 SEED_GLOBAL = 42
 
 import os
-if 'COLAB_GPU' in os.environ or 'COLAB_JUPYTER_TRANSPORT' in os.environ or 'COLAB_BACKEND_VERSION' in os.environ:
-    USING_COLAB = True
-else:
-    USING_COLAB = False
-
-if USING_COLAB:
-    # comment this away this if you are not using colab
-    !pip install transformers[sentencepiece]~=4.33.0 -q
-    !pip install datasets~=2.14.0 -q
-    !pip install accelerate~=0.23.0 -q
-    !pip install wandb~=0.16.0 -q
-    !pip install mdutils~=1.6.0 -q
-    !pip install scikit-learn~=1.2.0 -q
-
 ## load packages
 import pandas as pd
 import numpy as np

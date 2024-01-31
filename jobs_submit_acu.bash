@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 # Uncomment and adjust these if needed for your environment
 # module load 2022

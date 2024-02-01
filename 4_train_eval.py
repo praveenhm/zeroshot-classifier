@@ -28,6 +28,7 @@ import time
 import random
 import tqdm
 
+import sys
 import torch
 from torch.utils.data import DataLoader
 
@@ -143,6 +144,7 @@ max_length = 512
 ## load model and tokenizer
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Device: {device}")
+print(f"Model: {model_name}")
 
 # label2id mapping
 if args.do_train:
@@ -203,9 +205,11 @@ def tokenize_func(examples):
 # training on:
 encoded_dataset_train = dataset_train_filt.map(tokenize_func, batched=True)
 print(len(encoded_dataset_train))
+print(encoded_dataset_train)
 # testing during training loop on aggregated testset:
 encoded_dataset_test = dataset_test_concat_nli.map(tokenize_func, batched=True)
 print(len(encoded_dataset_test))
+print(encoded_dataset_test)
 # testing on individual datasets:
 encoded_dataset_test_disaggregated = dataset_test_disaggregated.map(tokenize_func, batched=True)
 
@@ -390,8 +394,11 @@ if device == "cuda":
     release_memory(model)
     #del (model, trainer)
 
+sys.exit()
+
 # train
 if args.do_train:
+
     trainer.train()
 
 """#### Evaluation"""

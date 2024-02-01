@@ -120,6 +120,8 @@ else:
 print(dataset_train.to_pandas().task_name.value_counts())
 
 dataset_train_filt = dataset_train.filter(lambda example: example['task_name'] not in dataset_name_heldout)
+print(dataset_train_filt)
+sys.exit()
 
 print(dataset_train_filt.to_pandas().task_name.value_counts())
 

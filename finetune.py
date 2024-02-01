@@ -124,7 +124,7 @@ print("\n\n")
 
 # downsampling for faster testing
 if args.downsample:
-    dataset_train_filt = dataset_train_filt.select(range(1000))
+    dataset_train_filt = dataset_train_filt.select(range(10))#1000
     dataset_test_concat_nli = dataset_test_concat_nli.select(range(1000))
     for dataset in dataset_test_disaggregated:
         dataset_test_disaggregated[dataset] = dataset_test_disaggregated[dataset].select(range(20))

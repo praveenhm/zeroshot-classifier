@@ -20,7 +20,7 @@ echo "starting the script"
 # )
 
 dataset_name_heldout=(
-    'imdb' 'appreviews' 'yelpreviews' 
+    'yelpreviews'         #'imdb' 'appreviews' 'yelpreviews' 
 )
 
 for dataset_name in "${dataset_name_heldout[@]}"
@@ -35,7 +35,7 @@ datasets=("all_except_nli" "none")
 for dataset_name in "${datasets[@]}"
 do  
     echo "Submitting job for dataset: $dataset_name"    
-    ./zeroshot/job_run.bash "$dataset_name" True True > "./zeroshot/logs/logs_$dataset_name.txt" 2>&1
+    #./zeroshot/job_run.bash "$dataset_name" True True > "./zeroshot/logs/logs_$dataset_name.txt" 2>&1
 done
 
 # No need for chmod +x and script execution lines as they are for the current script

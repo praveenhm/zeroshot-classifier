@@ -31,6 +31,7 @@ upload_to_hub=$3
 echo "Running experiment with parameter: dataset_name_heldout = $dataset_name_heldout,  do_train = $do_train,  upload_to_hub = $upload_to_hub"
 
 # run script
+echo "Starting the script 4_train_eval.py"
 python 4_train_eval.py --dataset_name_heldout "$dataset_name_heldout" --do_train "$do_train" --upload_to_hub "$upload_to_hub" &> "./logs/logs_$dataset_name_heldout-$(date +"%y%m%d%H%M").txt"
 
 

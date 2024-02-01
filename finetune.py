@@ -118,7 +118,8 @@ print("\n\n")
 # dataset_train_filt = dataset_train.filter(lambda example: example['task_name'] not in dataset_name_heldout)
 
 print("\n\n")
-print(f"Filtered Training Dataset: {dataset_train_filt} with counts:\n{dataset_train_filt.to_pandas().task_name.value_counts()}")
+#print(f"Filtered Training Dataset: {dataset_train_filt} with counts:\n{dataset_train_filt.to_pandas().task_name.value_counts()}")
+print(f"Filtered Training Dataset: {dataset_train_filt} with counts:\n{dataset_train_filt.to_pandas().value_counts()}")
 print("\n\n")
 
 # downsampling for faster testing

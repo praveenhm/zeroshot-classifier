@@ -76,6 +76,7 @@ print("Arguments passed via the terminal:\n", args)
 
 # load from hub
 
+dataset_finetune = load_dataset("penma/deberta-sample", token=config.HF_ACCESS_TOKEN)["train"]    
 
 dataset_train = load_dataset("MoritzLaurer/dataset_train_nli", token=config.HF_ACCESS_TOKEN)["train"]
 dataset_test_concat_nli = load_dataset("MoritzLaurer/dataset_test_concat_nli", token=config.HF_ACCESS_TOKEN)["train"]
@@ -96,7 +97,9 @@ task_names_manual = [
 ]
 
 # select specific training subset
-if args.dataset_name_heldout == "praveen":
+if args.dataset_name_heldout == "finetune":
+    dataset_train_filt = dataset_finetune
+elif args.dataset_name_heldout == "praveen":
     dataset_name_only_praveen = ["yelpreviews"]
     dataset_names_lst = set(dataset_train['task_name'])
     dataset_name_heldout = [dataset_name for dataset_name in dataset_names_lst if dataset_name not in dataset_name_only_praveen]
@@ -111,7 +114,7 @@ print("\n\n")
 print(f"Training Dataset: {dataset_train} with counts:\n{dataset_train.to_pandas().task_name.value_counts()}")
 print("\n\n")
 
-dataset_train_filt = load_dataset("penma/deberta-sample", token=config.HF_ACCESS_TOKEN)["train"]
+
 # dataset_train_filt = dataset_train.filter(lambda example: example['task_name'] not in dataset_name_heldout)
 
 print("\n\n")

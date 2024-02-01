@@ -93,7 +93,7 @@ task_names_manual = [
     'emocontext', 'empathetic', 'agnews', 'yahootopics',
     'biasframes_offensive', 'biasframes_sex', 'biasframes_intent',
     # added for v1.1
-    "manifesto", "capsotu",
+    "manifesto", "capsotu", "finetune",
 ]
 
 # select specific training subset

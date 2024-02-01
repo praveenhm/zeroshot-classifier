@@ -77,6 +77,8 @@ def str2bool(v):
 # main args
 parser.add_argument('-ds_heldout', '--dataset_name_heldout', type=str,
                     help='names for datasets not to include in training. For heldout testing')
+parser.add_argument('-downsample', '--downsample', type=str2bool, default=True,
+                    help='Downsample and restrict to 1000 entries')
 parser.add_argument('-train', '--do_train', type=str2bool, default=True,
                     help='Do training of flag set. Otherwise only evaluation')
 parser.add_argument('-upload', '--upload_to_hub',type=str2bool, default=False,
@@ -93,9 +95,6 @@ dataset_train = load_dataset("MoritzLaurer/dataset_train_nli", token=config.HF_A
 dataset_test_concat_nli = load_dataset("MoritzLaurer/dataset_test_concat_nli", token=config.HF_ACCESS_TOKEN)["train"]
 dataset_test_disaggregated = load_dataset("MoritzLaurer/dataset_test_disaggregated_nli", token=config.HF_ACCESS_TOKEN)
 
-print(len(dataset_train))
-print(dataset_train)
-
 # manually written task names for validating that code doesn't miss anything
 task_names_manual = [
     'wellformedquery', 'financialphrasebank', 'rottentomatoes', 'amazonpolarity',
@@ -110,34 +109,43 @@ task_names_manual = [
 ]
 
 # select specific training subset
-if args.dataset_name_heldout == "all_except_nli":
+if args.dataset_name_heldout == "praveen":
+    dataset_name_only_praveen = ["yelpreviews"]
+    dataset_names_lst = set(dataset_train['task_name'])
+    dataset_name_heldout = [dataset_name for dataset_name in dataset_names_lst if dataset_name not in dataset_name_only_praveen]
+elif args.dataset_name_heldout == "all_except_nli":
     dataset_name_only_nli = ["mnli", "anli", "fevernli", "wanli", "lingnli"]
     dataset_names_lst = set(dataset_train['task_name'])
     dataset_name_heldout = [dataset_name for dataset_name in dataset_names_lst if dataset_name not in dataset_name_only_nli]
 else:
     dataset_name_heldout = [args.dataset_name_heldout]
 
-print(dataset_train.to_pandas().task_name.value_counts())
+print("\n\n")
+print(f"Training Dataset: {dataset_train} with counts:\n{dataset_train.to_pandas().task_name.value_counts()}")
+print("\n\n")
 
 dataset_train_filt = dataset_train.filter(lambda example: example['task_name'] not in dataset_name_heldout)
-print(dataset_train_filt)
-sys.exit()
 
-print(dataset_train_filt.to_pandas().task_name.value_counts())
+print("\n\n")
+print(f"Filtered Training Dataset: {dataset_train_filt} with counts:\n{dataset_train_filt.to_pandas().task_name.value_counts()}")
+print("\n\n")
 
 # downsampling for faster testing
-#dataset_train_filt = dataset_train_filt.select(range(1000))
-#dataset_test_concat_nli = dataset_test_concat_nli.select(range(1000))
-#for dataset in dataset_test_disaggregated:
-#    dataset_test_disaggregated[dataset] = dataset_test_disaggregated[dataset].select(range(20))
+if args.downsample:
+    dataset_train_filt = dataset_train_filt.select(range(1000))
+    dataset_test_concat_nli = dataset_test_concat_nli.select(range(1000))
+    for dataset in dataset_test_disaggregated:
+        dataset_test_disaggregated[dataset] = dataset_test_disaggregated[dataset].select(range(20))
 
 """### Tokenize, train eval"""
 
 ### Load model and tokenizer
 
 if args.do_train:
+    print("Training...")
     model_name = "microsoft/xtremedistil-l6-h256-uncased"  #"microsoft/deberta-v3-xsmall"  #"microsoft/deberta-v3-large"  #"microsoft/deberta-v3-base" # microsoft/xtremedistil-l6-h256-uncased
 else:
+    print("Evaluating...")
     # can only comprehensively test binary NLI models, because NLI test datasets are binarized
     model_name = "MoritzLaurer/deberta-v3-base-mnli-fever-anli-ling-wanli-binary"  #"facebook/bart-large-mnli"  #"sileod/deberta-v3-base-tasksource-nli"  #"MoritzLaurer/DeBERTa-v3-base-mnli-fever-docnli-ling-2c"
 
@@ -187,10 +195,12 @@ run_name = f"{model_name.split('/')[-1]}-zeroshot-heldout-{args.dataset_name_hel
 #wandb.config.update({"dataset_name_heldout": dataset_name_heldout}, allow_val_change=True)
 
 # https://huggingface.co/docs/transformers/v4.34.0/en/main_classes/callback#transformers.integrations.WandbCallback
+wandb_log_model = "false"
+wandb_watch = "false"
+print(f"WANDB Arguments: {project_name} {wandb_log_model} {wandb_watch}")
 os.environ["WANDB_PROJECT"] = project_name  # log to your project
-#%env WANDB_PROJECT=amazon_sentiment_analysis
-os.environ["WANDB_LOG_MODEL"] = "false"  # Can be "end", "checkpoint" or "false". If set to "end", the model will be uploaded at the end of training. If set to "checkpoint", the checkpoint will be uploaded every args.save_steps . If set to "false", the model will not be uploaded. Use along with load_best_model_at_end() to upload best model.
-os.environ["WANDB_WATCH"] = "false"   # Can be "gradients", "all", "parameters", or "false". Set to "all" to log gradients and parameters.
+os.environ["WANDB_LOG_MODEL"] = wandb_log_model  # Can be "end", "checkpoint" or "false". If set to "end", the model will be uploaded at the end of training. If set to "checkpoint", the checkpoint will be uploaded every args.save_steps . If set to "false", the model will not be uploaded. Use along with load_best_model_at_end() to upload best model.
+os.environ["WANDB_WATCH"] = wandb_watch   # Can be "gradients", "all", "parameters", or "false". Set to "all" to log gradients and parameters.
 
 # custom init https://docs.wandb.ai/guides/integrations/huggingface#customize-wandbinit
 # config and name initialized via HF trainer
@@ -206,12 +216,15 @@ def tokenize_func(examples):
 
 # training on:
 encoded_dataset_train = dataset_train_filt.map(tokenize_func, batched=True)
+print("Encoded Dataset Train:")
 print(len(encoded_dataset_train))
 print(encoded_dataset_train)
 # testing during training loop on aggregated testset:
 encoded_dataset_test = dataset_test_concat_nli.map(tokenize_func, batched=True)
+print("Encoded Dataset Test:")
 print(len(encoded_dataset_test))
 print(encoded_dataset_test)
+
 # testing on individual datasets:
 encoded_dataset_test_disaggregated = dataset_test_disaggregated.map(tokenize_func, batched=True)
 
@@ -341,7 +354,7 @@ gradient_accumulation_steps = 4 if "large" in model_name else 1
     #gradient_accumulation_steps = int(gradient_accumulation_steps * 4)
     #eval_batch = int(eval_batch / 32) if "large" in model_name else int(eval_batch / 8)
 
-hub_model_id = f'MoritzLaurer/{model_name.split("/")[-1]}-zeroshot-v1.1-{args.dataset_name_heldout}'
+hub_model_id = f'penma/{model_name.split("/")[-1]}-zeroshot-v1.1-{args.dataset_name_heldout}'
 
 train_args = TrainingArguments(
     output_dir=training_directory,
@@ -395,8 +408,6 @@ if device == "cuda":
     flush()
     release_memory(model)
     #del (model, trainer)
-
-sys.exit()
 
 # train
 if args.do_train:

@@ -7,21 +7,21 @@
 # python ./zeroshot/download_datasets.py
 
 echo "starting the script"
-# Iterate through all datasets for heldout testing
-# dataset_name_heldout=(
-#     'wellformedquery' 'financialphrasebank' 'rottentomatoes' 'amazonpolarity'
-#     'imdb' 'appreviews' 'yelpreviews' 'wikitoxic_toxicaggregated'
-#     'wikitoxic_obscene' 'wikitoxic_threat' 'wikitoxic_insult'
-#     'wikitoxic_identityhate' 'hateoffensive' 'hatexplain'
-#     'trueteacher' 'spam' 'massive' 'banking77' 'emotiondair'
-#     'emocontext' 'empathetic' 'agnews' 'yahootopics'
-#     'biasframes_offensive' 'biasframes_sex' 'biasframes_intent'
-#     "manifesto" "capsotu"
-# )
-
+Iterate through all datasets for heldout testing
 dataset_name_heldout=(
-    'yelpreviews'         #'imdb' 'appreviews' 'yelpreviews' 
+    'wellformedquery' 'financialphrasebank' 'rottentomatoes' 'amazonpolarity'
+    'imdb' 'appreviews'   'wikitoxic_toxicaggregated'
+    'wikitoxic_obscene' 'wikitoxic_threat' 'wikitoxic_insult'
+    'wikitoxic_identityhate' 'hateoffensive' 'hatexplain'
+    'trueteacher' 'spam' 'massive' 'banking77' 'emotiondair'
+    'emocontext' 'empathetic' 'agnews' 'yahootopics'
+    'biasframes_offensive' 'biasframes_sex' 'biasframes_intent'
+    "manifesto" "capsotu"
 )
+
+# dataset_name_heldout=(
+#     'yelpreviews'         #'imdb' 'appreviews' 'yelpreviews' 
+# )
 
 for dataset_name in "${dataset_name_heldout[@]}"
 do

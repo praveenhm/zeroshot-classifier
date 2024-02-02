@@ -135,7 +135,8 @@ if args.downsample:
 
 if args.do_train:
     print("Training...")
-    model_name = "microsoft/xtremedistil-l6-h256-uncased"  #"microsoft/deberta-v3-xsmall"  #"microsoft/deberta-v3-large"  #"microsoft/deberta-v3-base" # microsoft/xtremedistil-l6-h256-uncased
+    # model_name = "microsoft/xtremedistil-l6-h256-uncased"  #"microsoft/deberta-v3-xsmall"  #"microsoft/deberta-v3-large"  #"microsoft/deberta-v3-base" # microsoft/xtremedistil-l6-h256-uncased
+    model_name = "MoritzLaurer/deberta-v3-base-zeroshot-v1.1-all-33"  #"microsoft/deberta-v3-xsmall"  #"microsoft/deberta-v3-large"  #"microsoft/deberta-v3-base" # microsoft/xtremedistil-l6-h256-uncased
 else:
     print("Evaluating...")
     # can only comprehensively test binary NLI models, because NLI test datasets are binarized

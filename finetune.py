@@ -76,7 +76,7 @@ print("Arguments passed via the terminal:\n", args)
 
 # load from hub
 
-dataset_finetune = load_dataset("penma/deberta2", token=config.HF_ACCESS_TOKEN)["train"]    
+dataset_finetune = load_dataset("penma/finance", token=config.HF_ACCESS_TOKEN)["train"]    
 
 dataset_train = load_dataset("MoritzLaurer/dataset_train_nli", token=config.HF_ACCESS_TOKEN)["train"]
 dataset_test_concat_nli = load_dataset("MoritzLaurer/dataset_test_concat_nli", token=config.HF_ACCESS_TOKEN)["train"]
@@ -124,7 +124,7 @@ print("\n\n")
 
 # downsampling for faster testing
 if args.downsample:
-    dataset_train_filt = dataset_train_filt.select(range(10))#1000
+    dataset_train_filt = dataset_train_filt.select(range(100))#1000
     dataset_test_concat_nli = dataset_test_concat_nli.select(range(1000))
     for dataset in dataset_test_disaggregated:
         dataset_test_disaggregated[dataset] = dataset_test_disaggregated[dataset].select(range(20))
@@ -347,7 +347,7 @@ gradient_accumulation_steps = 4 if "large" in model_name else 1
     #gradient_accumulation_steps = int(gradient_accumulation_steps * 4)
     #eval_batch = int(eval_batch / 32) if "large" in model_name else int(eval_batch / 8)
 
-hub_model_id = f'penma/{model_name.split("/")[-1]}-zeroshot-v1.1-{args.dataset_name_heldout}'
+hub_model_id = f'penma/{model_name.split("/")[-1]}-zeroshot-{args.dataset_name_heldout}'
 print("Hub model id: ==================>", hub_model_id)
 
 train_args = TrainingArguments(

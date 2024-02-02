@@ -348,6 +348,7 @@ gradient_accumulation_steps = 4 if "large" in model_name else 1
     #eval_batch = int(eval_batch / 32) if "large" in model_name else int(eval_batch / 8)
 
 hub_model_id = f'penma/{model_name.split("/")[-1]}-zeroshot-v1.1-{args.dataset_name_heldout}'
+print("Hub model id: ==================>", hub_model_id)
 
 train_args = TrainingArguments(
     output_dir=training_directory,
